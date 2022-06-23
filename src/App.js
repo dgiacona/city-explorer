@@ -17,10 +17,13 @@ class App extends React.Component {
   handleSubmit = async (event) => {
     event.preventDefault();
       try {
-      let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`;
+        let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`;
+        console.log(url);
+
       let cityData = await axios.get(url);
+      console.log(cityData.data[0]);
       this.setState({
-      cityData: cityData.data.results,
+      cityData: cityData.data[0],
       error: false
       });
     } catch (error) {
@@ -42,30 +45,24 @@ class App extends React.Component {
 
 
   render() {
-    let cityData = this.state.cityData.map((character, idx) => {
-      return <li key={idx}>{character.name}</li>;  
-    });
 
     return (
       <>
       <h1>Ready to Explore?</h1>
       <form onSubmit={this.handleSubmit}>
-        <button type="submit">Display City Data</button>
-      </form>
-      {this.state.error
-        ? <p>{this.state.errorMessage}</p>
-
-        :<ul>
-        {cityData}
-      </ul>
-      }
-
-      <form onSubmit={this.handleCitySubmit}>
         <label>Pick a City:
-          <input type="text" onInput={this.handleCityInput}/>
+          <input onChange={this.handleCityInput}type="text"/>
         </label>
         <button type="submit">Explore!</button>
       </form>
+      {this.state.error
+        ? <p>{this.state.errorMessage}</p>
+        :<ul>
+        <li>{'City Name: ' + this.state.cityData.display_name}</li>
+        <li>{'Latitude: ' + this.state.cityData.lat}</li>
+        <li>{'Longitude: ' + this.state.cityData.lon}</li>
+      </ul>
+      }
       </>
     );
   }

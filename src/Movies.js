@@ -1,10 +1,9 @@
 import React from 'react';
-import Forcast from './Forecast';
 
-class Weather extends React.Component {
+class Movies extends React.Component {
   render() {
     let weather = this.props.weatherData.map((day, idx) => (
-    <Forcast
+    <Movies
       key={idx}
       city={this.props.city}
       day={day}
@@ -25,4 +24,4 @@ return (
   }
 }
 
-export default Weather;
+export default Movies;

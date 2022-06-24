@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import Movies from './Movies';
+import Movies from './Movies'
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -83,7 +83,7 @@ class App extends React.Component {
         <ListGroup.Item>{'Latitude: ' + this.state.cityData.lat}</ListGroup.Item>
         <ListGroup.Item>{'Longitude: ' + this.state.cityData.lon}</ListGroup.Item>
         <ListGroup.Item>{this.state.forecast}</ListGroup.Item>
-        <Image class="img" src={this.state.cityMap}></Image>
+        <Image className="img" src={this.state.cityMap}></Image>
         <ListGroup.Item>{this.state.movieArray.length && <Movies
         movie={this.state.movieArray}/>}</ListGroup.Item>
       </ListGroup>

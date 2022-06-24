@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import Movies from './Movies';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -16,7 +17,9 @@ class App extends React.Component {
       cityData: {},
       error: false,
       errorMessage: '',
-      cityMap: ''
+      cityMap: '',
+      weatherData: [],
+      movieArray: []
     }
   };
   
@@ -29,13 +32,28 @@ class App extends React.Component {
   handleSubmit = async (event) => {
     event.preventDefault();
       try {
-        let url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`;
-        console.log(url);
-        let cityData = await axios.get(url);
+        let cityData = await axios.get`https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`;
+
         let cityMap = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=${cityData.data[0].lat},${cityData.data[0].lon}&zoom=13`;
+
+        const {lat, lon} = cityData.data[0];
+
+        const cityForecast = await axios.get(`${process.env.REACT_APP_SERVER}/weather?lat=${lat}&lon=${lon}`);
+
+        let forecast = cityForecast.data;
+
+        console.log(cityForecast);
+        let url = `${process.env.REACT_APP_SERVER}/movies?movieQueryCity=${this.state.city}`
+
+        let cityMovie = await axios.get(url);
+
+        let movieData = cityMovie.data
+
         this.setState({
           cityData: cityData.data[0],
-          cityMap: cityMap
+          cityMap: cityMap,
+          forecast: forecast,
+          movieArray: movieData
         });
     } 
     catch (error) {
@@ -44,6 +62,7 @@ class App extends React.Component {
         errorMessage: `An Error Occurred: ${error.response.status}. Sorry and error occured, plese refresh the page`
       });
     }
+
   };
 
 
@@ -63,7 +82,10 @@ class App extends React.Component {
         <ListGroup.Item>{'City Name: ' + this.state.cityData.display_name}</ListGroup.Item>
         <ListGroup.Item>{'Latitude: ' + this.state.cityData.lat}</ListGroup.Item>
         <ListGroup.Item>{'Longitude: ' + this.state.cityData.lon}</ListGroup.Item>
+        <ListGroup.Item>{this.state.forecast}</ListGroup.Item>
         <Image class="img" src={this.state.cityMap}></Image>
+        <ListGroup.Item>{this.state.movieArray.length && <Movies
+        movie={this.state.movieArray}/>}</ListGroup.Item>
       </ListGroup>
       }
       </>
